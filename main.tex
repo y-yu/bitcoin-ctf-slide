@@ -253,8 +253,8 @@
         \draw (3, 0) node[block] (B) {Bob};
         \draw (6, 0) node[block] (C) {Charlie};
          
-        \draw (1.5, -0.5) node[tx] (T1) {\textrm{Tx.1}};
-        \draw (4.5, -0.5) node[tx] (T2) {\textrm{Tx.2}};
+        \draw (1.5, -0.5) node[tx] (T1) {$\text{Tx}_1$};
+        \draw (4.5, -0.5) node[tx] (T2) {$\text{Tx}_2$};
          
         \draw (1.4, 0.3) node (BTC1) {1 BTC};
         \draw (4.4, 0.3) node (BTC2) {1 BTC};
@@ -271,7 +271,7 @@
       \end{tikzpicture}
     \end{figure}
 
-    \item<+-> マイナーは$\text{eval}$の結果が$\SOne{0}$以外なら受理し、
+    \item<+-> マイナーは$\text{eval}$の結果が$\SOne{0}$以外ならトランザクション$\text{Tx}_2$を受理し、
     $\SOne{0}$ならば拒否する
   \end{itemize}
 \end{frame}
