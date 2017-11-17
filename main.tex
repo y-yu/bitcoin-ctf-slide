@@ -39,6 +39,7 @@
 \usepackage{listings}
 
 \renewcommand{\kanjifamilydefault}{\gtdefault}
+\resetcounteronoverlays{lstlisting}
 
 %\setbeameroption{show notes on second screen=right}
 
@@ -189,7 +190,7 @@
   \end{itemize}
 \end{frame}
 
-\section{Bitcoin}
+\section{Bitcoinとスクリプト}
 
 \newcommand{\ScriptSig}{\textit{scriptSig}}
 \newcommand{\ScriptPubKey}{\textit{scriptPubKey}}
@@ -235,7 +236,7 @@
 \newcommand{\SFive}[1]{\AtSFive#1\csod}
 
 \begin{frame}
-  \frametitle{Bitcoin}
+  \frametitle{Bitcoinとスクリプト}
 
   \pause
   \begin{itemize}
@@ -261,9 +262,9 @@
         \draw[->, very thick] (A) -- (B);
         \draw[->, very thick] (B) -- (C);
          
-        \draw (1.62, -1.7) node {$\text{eval}($};
-        \draw (2.5, -1.7) node (E1) {\ScriptSig, };
-        \draw (4.05, -1.7) node (E2) {\ScriptPubKey$)$};
+        \draw (1.5, -1.7) node {$\text{eval}($};
+        \draw (2.4, -1.7) node (E1) {\ScriptSig, };
+        \draw (4.0, -1.7) node (E2) {\ScriptPubKey$)$};
          
         \draw[->, thick] (T2) -- (E1);
         \draw[->, thick] (T1) -- (E2);
@@ -328,18 +329,17 @@ OP_CHECKSIG
     \begin{itemize}
       \item ただし、トランザクションをブロックチェーンへ送信する時間はあらかじめ全参加チームに告知する
     \end{itemize}
-    \pause
     
     \item<+-> 運営は全てのトランザクション$Tx_j$のトランザクションIDをCTFの問題ページに記載する
   \end{enumerate}
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{CTFの開催中}
+  \frametitle{CTFの実施中}
 
   \pause
   \begin{enumerate}
-    \item<+-> 今、チーム$T_i$が問題$j$のフラッグワード$F_j$を得た。
+    \item<+-> 今、チーム$T_i$が問題$j$のフラッグワード$F_j$を得たとする。
     チーム$T_i$はトランザクション$\text{Tx}_{j}$を入力に持ち、
     次のような\ScriptSig を持つトランザクション$\text{Tx}_{ij}$を作成する。
     ただし、$h_{ij} := H(F_j \mid\mid i)$であり、
@@ -372,6 +372,7 @@ $i$
 \begin{frame}[fragile]
   \frametitle{フラッグワードが正しい場合の挙動}
 
+  \pause
   \begin{columns}
     \begin{column}{0.4\textwidth}
 \begin{lstlisting}[style=bitcoin-script]
@@ -440,7 +441,7 @@ OP_CHECKSIG
       \begin{enumerate}
         \setcounter{enumi}{4}
 
-        \item<+-> スタックの先頭を捨てる$\STwo{h_{1j},S_1}$ \pause
+        \item<+-> スタックの先頭を捨てる$\STwo{h_{1j},S_1}$
 
         \item<+-> スタック先頭にSHA-256を適用し結果をスタックの先頭に追加する
         $\STwo{H(h_{1j}),S_1}$
@@ -487,7 +488,7 @@ OP_CHECKSIG
         \setcounter{enumi}{8}
 
         \item<+-> チーム$T_1$の公開鍵$\mathcal{T}_1$をスタックの先頭に追加する
-        $\STwo{\mathcal{T}_1,S_1}$ \pause
+        $\STwo{\mathcal{T}_1,S_1}$
 
         \item<+-> スタックの先頭にあるデータを公開鍵として、
         スタックの先頭から2番目にあるデータとして署名としてそれらを検証する
@@ -533,9 +534,9 @@ OP_CHECKSIG
     \item<+-> Bitcoinを利用したCTFについて考えることで、
     より透明で公平なCTFを構成できた
 
-    \item<+-> Bitcoinのリファレンス実装では、
+    \item<+-> Bitcoinのリファレンス実装は、
     提案するCTFで利用するようなトランザクションを受け付けない。
-    従って現実的にはEthereumなど別の暗号通貨を利用しなければならないかもしれない
+    よって現実的にはEthereumなど別の暗号通貨を利用しなければならないかもしれない
 
     \item<+-> 賞金が集まれば、提案する方法でCTFを実施してみたい
   \end{itemize}
