@@ -1,0 +1,555 @@
+\definecolor{links}{HTML}{2A1B81}
+\hypersetup{colorlinks,linkcolor=,urlcolor=links}
+
+\usetheme{Boadilla}
+\usecolortheme{seahorse}
+% \usefonttheme{serif}
+\beamertemplatenavigationsymbolsempty
+
+\setbeamertemplate{bibliography item}{\insertbiblabel}
+\setbeamersize{description width=1cm}
+
+\usepackage{luacode}
+\usepackage{luatexja}
+\usepackage{pgfpages}
+\usepackage{fontspec}
+
+\begin{luacode*}
+  USE_IPAFONT = os.getenv"USE_IPAFONT"
+  USE_YUFONT = os.getenv"USE_YUFONT"
+  
+  if USE_YUFONT == "true" then
+    tex.sprint("\\AtBeginDocument{\\usepackage[yu-osx, deluxe, expert]{luatexja-preset}}")
+  elseif USE_IPAFONT == "true" then
+    tex.sprint("\\AtBeginDocument{\\usepackage[ipaex, deluxe, expert]{luatexja-preset}}")
+  else
+    tex.sprint("\\AtBeginDocument{\\usepackage[hiragino-pro, deluxe, expert]{luatexja-preset}}")
+  end
+\end{luacode*}
+
+
+\usepackage{epigraph}
+\usepackage{etoolbox}
+\usepackage{tikz}
+\usepackage{framed}
+\usepackage[ss]{libertine}
+\usepackage[libertine]{newtxmath}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{listings}
+
+\renewcommand{\kanjifamilydefault}{\gtdefault}
+
+%\setbeameroption{show notes on second screen=right}
+
+\setmonofont[Ligatures=TeX]{CMU Typewriter Text}
+
+\input{vc.tex}
+
+\title[BitcoinでCTF]{%
+  BitcoinでCTF \\
+  {\normalsize Bitcoin based CTF} 
+}
+\author[吉村 優]{%
+  吉村 優 \\
+  Hikaru \textsc{Yoshimura}
+}
+\date[November 18 2017]{%
+  November 18, 2017 \\%
+  {\footnotesize (Git Commit ID: \GITAbrHash)}
+}
+\institute[株式会社ドワンゴ]{%
+  株式会社ドワンゴ \\
+  \href{mailto:yyu@mental.poker}{yyu@mental.poker}
+
+}
+
+\input{./lib/quotebox.tex}
+\input{./lib/footnotemark.tex}
+\input{./lib/ballon.tex}
+\input{./lib/listings.tex}
+
+\newcommand\ballref[1]{%
+\tikz \node[circle, shade,ball color=structure.fg,inner sep=0pt,%
+  text width=8pt,font=\tiny,align=center] {\color{white}\ref{#1}};
+}
+
+\begin{document}
+
+\frame{\maketitle}
+
+\section{自己紹介}
+\begin{frame}
+  \frametitle{自己紹介}
+  
+  \begin{columns}
+    \begin{column}{0.4\textwidth}
+      \begin{center}
+        \begin{figure}
+          \includegraphics[width=0.95\textwidth]{img/bird2x.png}
+        \end{figure}
+      \end{center}
+
+      \begin{table}[h]
+        \begin{tabular}{ll}
+          Twitter & \href{https://twitter.com/\_yyu\_}{@\_yyu\_} \\
+          Qiita &  \href{https://qiita.com/yyu}{yyu} \\
+          GitHub &  \href{https://github.com/y-yu}{y-yu} \\
+        \end{tabular}
+      \end{table}
+    \end{column}
+    \begin{column}{0.6\textwidth}
+      \begin{itemize}
+        \item<2-> 筑波大学 情報科学類卒（学士）
+        \item<3-> 株式会社ドワンゴ 入社
+        \item<4-> 第二サービス開発本部 \\
+          Dwango Cloud Service部 \\
+          認証基盤セクション
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{CTFとは？}
+
+\begin{frame}
+  \frametitle{CTFとは？}
+
+  \pause
+  \begin{itemize}
+    \item<+-> ``Capture The Flag''の略でセキュリティ系の競技のこと
+    \item<+-> いくつかの形式があるがここでは\emph{jeopardy}形式について説明する
+  \end{itemize}
+
+  \uncover<+->{
+    \begin{block}{CTF (jeopardy)}
+      \begin{itemize}
+        \item 脆弱性を攻撃するなどして\textbf{フラッグワード}と呼ばれる文字列を得る
+        \item フラッグワードによって相応のポイントが得られ、
+        最終的に最もポイントを獲得したチームが勝利する
+      \end{itemize} 
+    \end{block}
+  }
+
+  \begin{itemize}
+    \item<+-> 国際的なCTFは賞金がもらえる
+    \begin{description}
+      \item[Google CTF 2017 (Final)] 1位に13,337 USD（約150万円）
+      \item[Codegate CTF Finals 2017] 1位に30,000,000 KRW（約307万円）
+    \end{description}
+  \end{itemize}
+\end{frame}
+
+\section{従来のCTFの課題}
+
+\begin{frame}
+  \frametitle{従来のCTFの課題}
+
+  \pause
+  \begin{itemize}
+    \item<+-> 勝利したチームが賞金を本当に得られるのかが不明である
+    \begin{itemize}
+      \item たとえば脆弱性の情報が欲しいのでCTFを開催したとか
+    \end{itemize}
+
+    \item<+-> 問題を解いたチームが時間内に回答したという証拠がない
+    \begin{itemize}
+      \item Write-upを書くという手もあるが、CTFが終ってから解いたという可能性もある
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\section{提案するCTFの特徴}
+
+\begin{frame}
+  \frametitle{提案するCTFの特徴}
+
+  \pause
+  \begin{itemize}
+    \item<+-> 正しいフラッグワードを提出した場合、
+    参加者は直ちにその問題に対応する賞金が得られる
+    \begin{itemize}
+      \item<+-> 従来のCTFではポイントの多い順に賞金が決まるが、
+      提案するCTFでは賞金が多い順に順位が決まる
+    \end{itemize}
+
+    \item<+-> 賞金は全てBitcoinで支払われる
+
+    \item<+-> 基本的に問題を最初に解答したチーム以外には賞金が支払われない
+    \begin{itemize}
+      \item ただし、改良することで問題の解答順序に関わらず賞金を与えることができる
+    \end{itemize}
+
+    \item<+-> 誰もが閲覧できるBitcoinのブロックチェーンを利用するので、
+    どのチームが問題を時間内に解答したかが誰にとっても明らかである
+
+    \item<+-> 従来のCTFとは異なり開始時刻や終了時刻がJSTなどではなく、
+    Bitcoinのブロックチェーンの長さが$n$に達した時に開始であり、
+    $m\;(m > n)$に達した時に終了である
+  \end{itemize}
+\end{frame}
+
+\section{Bitcoin}
+
+\newcommand{\ScriptSig}{\textit{scriptSig}}
+\newcommand{\ScriptPubKey}{\textit{scriptPubKey}}
+\def\AtSOne#1\csod{%
+	\begin{array}{c|}
+		\hline
+		#1\\
+		\hline
+	\end{array}
+}%
+\def\AtSTwo#1,#2\csod{%
+	\begin{array}{c|c|}
+		\hline
+		#1 & #2\\
+		\hline
+	\end{array}
+}%
+\def\AtSThree#1,#2,#3\csod{%
+	\begin{array}{c|c|c|}
+		\hline
+		#1 & #2 & #3\\
+		\hline
+	\end{array}
+}%
+\def\AtSFour#1,#2,#3,#4\csod{%
+	\begin{array}{c|c|c|c|}
+		\hline
+		#1 & #2 & #3 & #4\\
+		\hline
+	\end{array}
+}%
+\def\AtSFive#1,#2,#3,#4,#5\csod{%
+	\begin{array}{c|c|c|c|c|}
+		\hline
+		#1 & #2 & #3 & #4 & #5\\
+		\hline
+	\end{array}
+}%
+\newcommand{\SOne}[1]{\AtSOne#1\csod}
+\newcommand{\STwo}[1]{\AtSTwo#1\csod}
+\newcommand{\SThree}[1]{\AtSThree#1\csod}
+\newcommand{\SFour}[1]{\AtSFour#1\csod}
+\newcommand{\SFive}[1]{\AtSFive#1\csod}
+
+\begin{frame}
+  \frametitle{Bitcoin}
+
+  \pause
+  \begin{itemize}
+    \item<+-> Bitcoinのトランザクションには\ScriptSig と\ScriptPubKey という
+    2つの場所に\textbf{スクリプト}と呼ばれる非チューリング完全な
+    プログラムを書き込める
+
+    \item<+-> マイナーは次のようにトランザクションのスクリプトを実行する
+    \begin{figure}[h]
+      \begin{tikzpicture}[scale=1.3, block/.style = {rectangle, draw=black, thick, text width=4em, align=center, rounded corners, minimum height=2em},
+        tx/.style = {rectangle, draw=black, very thick, text width=2em, align=center, minimum height=1em}]
+         
+        \draw (0, 0) node[block] (A) {Alice};
+        \draw (3, 0) node[block] (B) {Bob};
+        \draw (6, 0) node[block] (C) {Charlie};
+         
+        \draw (1.5, -0.5) node[tx] (T1) {\textrm{Tx.1}};
+        \draw (4.5, -0.5) node[tx] (T2) {\textrm{Tx.2}};
+         
+        \draw (1.4, 0.3) node (BTC1) {1 BTC};
+        \draw (4.4, 0.3) node (BTC2) {1 BTC};
+         
+        \draw[->, very thick] (A) -- (B);
+        \draw[->, very thick] (B) -- (C);
+         
+        \draw (1.62, -1.7) node {$\text{eval}($};
+        \draw (2.5, -1.7) node (E1) {\ScriptSig, };
+        \draw (4.05, -1.7) node (E2) {\ScriptPubKey$)$};
+         
+        \draw[->, thick] (T2) -- (E1);
+        \draw[->, thick] (T1) -- (E2);
+      \end{tikzpicture}
+    \end{figure}
+
+    \item<+-> マイナーは$\text{eval}$の結果が$\SOne{0}$以外なら受理し、
+    $\SOne{0}$ならば拒否する
+  \end{itemize}
+\end{frame}
+
+\section{CTFのプロトコル}
+
+\begin{frame}
+  \frametitle{CTFの開催前}
+
+  \pause
+  \begin{enumerate}
+    \item<+-> 参加チーム$T_i$は運営にBitcoinの公開鍵$\mathcal{T}_i$を提出する
+    \item<+-> 運営は参加登録をブロックチェーンの長さが$n$となる前に締め切る
+    \item<+-> 問題$j$に対応するフラッグワードを$F_j$として、
+    またこの問題$j$を解答した際に得られる賞金を$B_j$ BTCとし、
+    さらに、$ans_{ij} := H\left(H(F_j \mid\mid i)\right)$とする
+    運営は問題$j$に対して、後述のような\ScriptPubKey を持つ$B_j$ BTCのトランザクション
+    $\text{Tx}_j$を作成する
+    \begin{itemize}
+      \item $H$はハッシュ関数SHA-256であり、また$\mid\mid$は文字列の結合である
+    \end{itemize}
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{CTFの開催前}
+
+\begin{lstlisting}[style=bitcoin-script, caption={$\text{Tx}_j$の\ScriptPubKey}]
+OP_DUP
+$1$
+OP_EQUAL
+OP_IF
+  OP_DROP
+  OP_SHA256
+  $ans_{1j}$
+  OP_EQUALVERIFY
+  $\mathcal{T}_1$
+OP_ELSE
+  OP_DUP
+  $2$
+  OP_EQUAL
+  $\vbox{\baselineskip2.5pt\lineskiplimit0pt\kern1pt\hbox{.}\hbox{.}\hbox{.}\kern-1pt}$
+OP_ENDIF
+OP_CHECKSIG 
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}
+  \frametitle{CTFの開催前}
+
+  \begin{enumerate}
+    \setcounter{enumi}{3}
+
+    \item<+-> 運営は全てのトランザクション$\text{Tx}_j$をブロックチェーンへ送信する
+    \begin{itemize}
+      \item ただし、トランザクションをブロックチェーンへ送信する時間はあらかじめ全参加チームに告知する
+    \end{itemize}
+    \pause
+    
+    \item<+-> 運営は全てのトランザクション$Tx_j$のトランザクションIDをCTFの問題ページに記載する
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{CTFの開催中}
+
+  \pause
+  \begin{enumerate}
+    \item<+-> 今、チーム$T_i$が問題$j$のフラッグワード$F_j$を得た。
+    チーム$T_i$はトランザクション$\text{Tx}_{j}$を入力に持ち、
+    次のような\ScriptSig を持つトランザクション$\text{Tx}_{ij}$を作成する。
+    ただし、$h_{ij} := H(F_j \mid\mid i)$であり、
+    $S_i$はチーム$T_i$のBitcoinの公開鍵$\mathcal{T}_i$に対応する秘密鍵によって作成された署名である
+\begin{lstlisting}[style=bitcoin-script, caption={$\text{Tx}_{ij}$の\ScriptSig}]
+$S_i$
+$h_{ij}$
+$i$
+\end{lstlisting}
+
+    \item<+-> チーム$T_i$はトランザクション$\mathrm{Tx}_{ij}$をBitcoinのブロックチェーンへ送信する
+    \item<+-> 問題$j$がまだ解かれていないかつフラッグワードが正しい場合、
+    チーム$T_i$は$B_j$ BTCを獲得する
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}
+  \frametitle{CTFの終了後}
+
+  \pause
+  \begin{enumerate}
+    \item<+-> 運営はBitcoinのブロックチェーンの長さが$m + 3$に達したときの
+    ブロックチェーンについて、チームに対応するBitcoinの公開鍵を用いて問題を
+    解答することで獲得したBitcoinの量を計測する
+
+    \item<+-> Bitcoinを獲得した量でチームの順位付けを行う
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{フラッグワードが正しい場合の挙動}
+
+  \begin{columns}
+    \begin{column}{0.4\textwidth}
+\begin{lstlisting}[style=bitcoin-script]
+OP_DUP
+$1$
+OP_EQUAL
+OP_IF
+  OP_DROP
+  OP_SHA256
+  $ans_{1j}$
+  OP_EQUALVERIFY
+  $\mathcal{T}_1$
+OP_ELSE
+  OP_DUP
+  $2$
+  OP_EQUAL
+  $\vbox{\baselineskip2.5pt\lineskiplimit0pt\kern1pt\hbox{.}\hbox{.}\hbox{.}\kern-1pt}$
+OP_ENDIF
+OP_CHECKSIG 
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.6\textwidth}
+      \begin{enumerate}
+        \item<+-> チーム$T_1$がトランザクション$\text{Tx}_{1j}$を送信したとする。
+        その\ScriptSig から、スタックは$\SThree{1,h_{1j},S_1}$となる。
+        ここから$\text{Tx}_j$の\ScriptPubKey を実行する
+       
+        \item<+-> スタックの先頭を複製して$1$を載せる$\SFive{1,1,1,h_{1j},S_1}$
+        
+        \item<+-> スタックの先頭から2つを取り出し、それらを比較する（等しいので$1$が積まれる）
+        $\SFour{1,1,h_{1j},S_1}$
+        
+        \item<+-> スタックの先頭を取り除き、
+        それが$1$なので\lstinline|OP_IF|から\lstinline|OP_ELSE|を実行する
+        $\SThree{1,h_{1j},S_1}$
+      \end{enumerate}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{フラッグワードが正しい場合の挙動}
+
+  \begin{columns}
+    \begin{column}{0.4\textwidth}
+\begin{lstlisting}[style=bitcoin-script]
+OP_DUP
+$1$
+OP_EQUAL
+OP_IF
+  OP_DROP
+  OP_SHA256
+  $ans_{1j}$
+  OP_EQUALVERIFY
+  $\mathcal{T}_1$
+OP_ELSE
+  OP_DUP
+  $2$
+  OP_EQUAL
+  $\vbox{\baselineskip2.5pt\lineskiplimit0pt\kern1pt\hbox{.}\hbox{.}\hbox{.}\kern-1pt}$
+OP_ENDIF
+OP_CHECKSIG 
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.6\textwidth}
+      \begin{enumerate}
+        \setcounter{enumi}{4}
+
+        \item<+-> スタックの先頭を捨てる$\STwo{h_{1j},S_1}$ \pause
+
+        \item<+-> スタック先頭にSHA-256を適用し結果をスタックの先頭に追加する
+        $\STwo{H(h_{1j}),S_1}$
+
+        \item<+-> $ans_{1j}$をスタックの先頭に追加する$\SThree{ans_{1j},H(h_{1j}),S_1}$
+
+        \item<+-> スタックの先頭から2つを取り出し、それらを比較する。
+        等しくない場合は直ちに失敗となる$\SOne{S_1}$
+        \begin{itemize}
+          \item $h_{1j} = H(F_j \mid\mid 1)$
+          \item $ans_{1j} = H\left(H(F_j \mid\mid 1)\right)$
+        \end{itemize}
+      \end{enumerate}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{フラッグワードが正しい場合の挙動}
+
+  \begin{columns}
+    \begin{column}{0.4\textwidth}
+\begin{lstlisting}[style=bitcoin-script]
+OP_DUP
+$1$
+OP_EQUAL
+OP_IF
+  OP_DROP
+  OP_SHA256
+  $ans_{1j}$
+  OP_EQUALVERIFY
+  $\mathcal{T}_1$
+OP_ELSE
+  OP_DUP
+  $2$
+  OP_EQUAL
+  $\vbox{\baselineskip2.5pt\lineskiplimit0pt\kern1pt\hbox{.}\hbox{.}\hbox{.}\kern-1pt}$
+OP_ENDIF
+OP_CHECKSIG 
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.6\textwidth}
+      \begin{enumerate}
+        \setcounter{enumi}{8}
+
+        \item<+-> チーム$T_1$の公開鍵$\mathcal{T}_1$をスタックの先頭に追加する
+        $\STwo{\mathcal{T}_1,S_1}$ \pause
+
+        \item<+-> スタックの先頭にあるデータを公開鍵として、
+        スタックの先頭から2番目にあるデータとして署名としてそれらを検証する
+        $\SOne{1}$
+        
+      \end{enumerate}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{進んだ話題}
+
+  \pause
+  \begin{itemize}
+    \item<+-> ブロックチェーンの長さが$m$となったら運営が賞金を回収するために、
+    トランザクションを次のようにする
+\begin{lstlisting}[style=bitcoin-script]
+$\vbox{\baselineskip2.5pt\lineskiplimit0pt\kern1pt\hbox{.}\hbox{.}\hbox{.}\kern-1pt}$      
+OP_ELSE
+  OP_DROP
+  $m$
+  OP_CHECKLOCKTIMEVERIFY
+  OP_DROP
+  $\mathcal{T}_{master}$
+OP_ENDIF
+$\vbox{\baselineskip2.5pt\lineskiplimit0pt\kern1pt\hbox{.}\hbox{.}\hbox{.}\kern-1pt}$
+OP_CHECKSIG
+\end{lstlisting}
+
+    \item<+-> 問題とチームのそれぞれごとにトランザクションを用意することで、
+    従来のCTFのように解答順序によらずに賞金を与えることもできる
+  \end{itemize}
+\end{frame}
+
+\section{まとめ}
+
+\begin{frame}
+  \frametitle{まとめ}
+
+  \pause
+  \begin{itemize}
+    \item<+-> Bitcoinを利用したCTFについて考えることで、
+    より透明で公平なCTFを構成できた
+
+    \item<+-> Bitcoinのリファレンス実装では、
+    提案するCTFで利用するようなトランザクションを受け付けない。
+    従って現実的にはEthereumなど別の暗号通貨を利用しなければならないかもしれない
+
+    \item<+-> 賞金が集まれば、提案する方法でCTFを実施してみたい
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{目次}
+
+  \tableofcontents
+\end{frame}
+
+\begin{frame}
+  \centering
+  {\Huge Thank you for your attention!}
+\end{frame}
+
+\end{document}
