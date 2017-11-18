@@ -1,6 +1,11 @@
 Bitcoin based CTF
 ============================
 
+## 成果物（PDF）
+
+- [アニメーションあり版](https://y-yu.github.io/bitcoin-ctf-slide/bitcoin_ctf.pdf)
+- [アニメーションなし版](https://y-yu.github.io/bitcoin-ctf-slide/bitcoin_ctf_without_animation.pdf)
+
 ## コンパイル
 
 コンパイルにはLuaLaTeXが必要です。[TeXLive](https://www.tug.org/texlive/)（または[MacTeX](https://tug.org/mactex/)）をインストールしてください。
