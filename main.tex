@@ -37,9 +37,14 @@
 \usepackage{amsmath}
 \usepackage{mathtools}
 \usepackage{listings}
+\usepackage{caption}
 
 \renewcommand{\kanjifamilydefault}{\gtdefault}
+
 \resetcounteronoverlays{lstlisting}
+\definecolor{bluegray}{rgb}{0.4, 0.6, 0.8}
+\DeclareCaptionFormat{listing}{{\color{bluegray}\lstlistingname}#2#3}
+\captionsetup[lstlisting]{format=listing, font={footnotesize}}
 
 %\setbeameroption{show notes on second screen=right}
 
@@ -375,7 +380,8 @@ $i$
   \pause
   \begin{columns}
     \begin{column}{0.4\textwidth}
-\begin{lstlisting}[style=bitcoin-script]
+      \begin{minipage}[c][0.9\textheight][c]{\linewidth}
+\begin{lstlisting}[style=bitcoin-script, caption={$\text{Tx}_j$の\ScriptPubKey}]
 OP_DUP
 $1$
 OP_EQUAL
@@ -386,13 +392,11 @@ OP_IF
   OP_EQUALVERIFY
   $\mathcal{T}_1$
 OP_ELSE
-  OP_DUP
-  $2$
-  OP_EQUAL
   $\vbox{\baselineskip2.5pt\lineskiplimit0pt\kern1pt\hbox{.}\hbox{.}\hbox{.}\kern-1pt}$
 OP_ENDIF
 OP_CHECKSIG 
 \end{lstlisting}
+      \end{minipage}
     \end{column}
     \begin{column}{0.6\textwidth}
       \begin{enumerate}
@@ -418,7 +422,8 @@ OP_CHECKSIG
 
   \begin{columns}
     \begin{column}{0.4\textwidth}
-\begin{lstlisting}[style=bitcoin-script]
+       \begin{minipage}[c][0.9\textheight][c]{\linewidth}
+\begin{lstlisting}[style=bitcoin-script,caption={$\text{Tx}_j$の\ScriptPubKey}]
 OP_DUP
 $1$
 OP_EQUAL
@@ -429,13 +434,11 @@ OP_IF
   OP_EQUALVERIFY
   $\mathcal{T}_1$
 OP_ELSE
-  OP_DUP
-  $2$
-  OP_EQUAL
   $\vbox{\baselineskip2.5pt\lineskiplimit0pt\kern1pt\hbox{.}\hbox{.}\hbox{.}\kern-1pt}$
 OP_ENDIF
 OP_CHECKSIG 
 \end{lstlisting}
+      \end{minipage}
     \end{column}
     \begin{column}{0.6\textwidth}
       \begin{enumerate}
@@ -464,7 +467,8 @@ OP_CHECKSIG
 
   \begin{columns}
     \begin{column}{0.4\textwidth}
-\begin{lstlisting}[style=bitcoin-script]
+      \begin{minipage}[c][0.9\textheight][c]{\linewidth}
+\begin{lstlisting}[style=bitcoin-script,caption={$\text{Tx}_j$の\ScriptPubKey}]
 OP_DUP
 $1$
 OP_EQUAL
@@ -475,13 +479,11 @@ OP_IF
   OP_EQUALVERIFY
   $\mathcal{T}_1$
 OP_ELSE
-  OP_DUP
-  $2$
-  OP_EQUAL
   $\vbox{\baselineskip2.5pt\lineskiplimit0pt\kern1pt\hbox{.}\hbox{.}\hbox{.}\kern-1pt}$
 OP_ENDIF
 OP_CHECKSIG 
 \end{lstlisting}
+      \end{minipage}
     \end{column}
     \begin{column}{0.6\textwidth}
       \begin{enumerate}
@@ -499,6 +501,8 @@ OP_CHECKSIG
   \end{columns}
 \end{frame}
 
+\section{進んだ話題}
+
 \begin{frame}[fragile]
   \frametitle{進んだ話題}
 
@@ -506,21 +510,34 @@ OP_CHECKSIG
   \begin{itemize}
     \item<+-> ブロックチェーンの長さが$m$となったら運営が賞金を回収するために、
     トランザクションを次のようにする
-\begin{lstlisting}[style=bitcoin-script]
+\begin{lstlisting}[style=bitcoin-script, caption={改良した$\text{Tx}_j$の\ScriptPubKey の一部}]
 $\vbox{\baselineskip2.5pt\lineskiplimit0pt\kern1pt\hbox{.}\hbox{.}\hbox{.}\kern-1pt}$      
 OP_ELSE
   OP_DROP
   $m$
-  OP_CHECKLOCKTIMEVERIFY
+  OP_CHECKLO
+  CKTIMEVERIFY
   OP_DROP
   $\mathcal{T}_{master}$
 OP_ENDIF
 $\vbox{\baselineskip2.5pt\lineskiplimit0pt\kern1pt\hbox{.}\hbox{.}\hbox{.}\kern-1pt}$
 OP_CHECKSIG
 \end{lstlisting}
+    \begin{itemize}
+      \item ただし$\mathcal{T}_{master}$は運営のBitcoin公開鍵とする
+    \end{itemize}
+  \end{itemize}
+\end{frame}
 
+\begin{frame}
+  \frametitle{進んだ話題}
+
+  \begin{itemize}
     \item<+-> 問題とチームのそれぞれごとにトランザクションを用意することで、
     従来のCTFのように解答順序によらずに賞金を与えることもできる
+    \begin{itemize}
+      \item ただし、そうすると1問あたりの賞金を減らさざるを得ない
+    \end{itemize}
   \end{itemize}
 \end{frame}
 
