@@ -62,7 +62,7 @@
 }
 \date[November 20, 2017]{%
   November 20, 2017 \\%
-  {\footnotesize (Git Commit ID: \GITAbrHash)}
+  {\footnotesize (Git Commit ID: \href{https://github.com/y-yu/bitcoin-ctf-slide}{\GITAbrHash})}
 }
 \institute[株式会社ドワンゴ]{%
   株式会社ドワンゴ \\
@@ -124,7 +124,7 @@
   \pause
   \begin{itemize}
     \item<+-> ``Capture The Flag''の略でセキュリティ系の競技のこと
-    \item<+-> いくつかの形式があるがここでは\emph{jeopardy}形式について説明する
+    \item<+-> CTFは形式があるが、この発表では\emph{jeopardy}形式を前提とする
   \end{itemize}
 
   \uncover<+->{
@@ -185,13 +185,24 @@
     \begin{itemize}
       \item ただし、改良することで問題の解答順序に関わらず賞金を与えることができる
     \end{itemize}
+  \end{itemize}
+\end{frame}
 
+\begin{frame}
+  \frametitle{提案するCTFの特徴}
+
+  \begin{itemize}
     \item<+-> 誰もが閲覧できるBitcoinのブロックチェーンを利用するので、
     どのチームが問題を時間内に解答したかが誰にとっても明らかである
 
     \item<+-> 従来のCTFとは異なり開始時刻や終了時刻がJSTなどではなく、
     Bitcoinのブロックチェーンの長さが$n$に達した時に開始であり、
     $m\;(m > n)$に達した時に終了である
+    \begin{itemize}
+      \item Bitcoinのブロックチェーンは1ブロックの作成に約10分必要である。
+      よって、このCTFの制限時間は約10分刻みで指定できるため、
+      実用上の問題はないと考えられる
+    \end{itemize}
   \end{itemize}
 \end{frame}
 
