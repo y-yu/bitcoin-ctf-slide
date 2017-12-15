@@ -60,8 +60,8 @@
   吉村 優 \\
   Hikaru \textsc{Yoshimura}
 }
-\date[November 20, 2017]{%
-  November 20, 2017 \\%
+\date[December 15, 2017]{%
+  December 15, 2017 \\%
   {\footnotesize (Git Commit ID: \href{https://github.com/y-yu/bitcoin-ctf-slide}{\GITAbrHash})}
 }
 \institute[株式会社ドワンゴ]{%
@@ -182,9 +182,6 @@
     \item<+-> 賞金は全てBitcoinで支払われる
 
     \item<+-> 基本的に問題を最初に解答したチーム以外には賞金が支払われない
-    \begin{itemize}
-      \item ただし、改良することで問題の解答順序に関わらず賞金を与えることができる
-    \end{itemize}
   \end{itemize}
 \end{frame}
 
@@ -547,9 +544,11 @@ OP_CHECKSIG
 
   \begin{itemize}
     \item<+-> 問題とチームのそれぞれごとにトランザクションを用意することで、
-    従来のCTFのように解答順序によらずに賞金を与えることもできる
+    従来のCTFのように解答順序によらずに賞金を与えることもできる？
     \begin{itemize}
-      \item ただし、そうすると1問あたりの賞金を減らさざるを得ない
+      \item<+-> ただし、そうするとメンバーを同じにしたチームをたくさん作ることで
+      分割した賞金を不正に取得する攻撃ができる
+      \item<+-> 従って最初に解いたチーム以外に賞金を与えることはできない
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -569,6 +568,8 @@ OP_CHECKSIG
     よって現実的にはEthereumなど別の暗号通貨を利用しなければならないかもしれない
 
     \item<+-> 賞金が集まれば、提案する方法でCTFを実施してみたい
+
+    \item<+-> 次の冬コミ（C93）ではこの内容で同人誌を出します！
   \end{itemize}
 \end{frame}
 
