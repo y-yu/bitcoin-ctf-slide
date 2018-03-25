@@ -60,12 +60,13 @@
   吉村 優 \\
   Hikaru \textsc{Yoshimura}
 }
-\date[December 20, 2017]{%
-  December 20, 2017 \\%
+\date[March 27, 2018]{%
+  March 27, 2018 \\%
   {\footnotesize (Git Commit ID: \href{https://github.com/y-yu/bitcoin-ctf-slide}{\GITAbrHash})}
 }
-\institute[株式会社ドワンゴ]{%
-  株式会社ドワンゴ \\
+\institute[RMP]{%
+  リクルートマーケティングパートナーズ \\
+  \href{mailto:hikaru_yoshimura@r.recruit.co.jp}{hikaru\_yoshimura@r.recruit.co.jp} \\
   \href{mailto:yyu@mental.poker}{yyu@mental.poker}
 
 }
@@ -107,10 +108,8 @@
     \begin{column}{0.6\textwidth}
       \begin{itemize}
         \item<2-> 筑波大学 情報科学類卒（学士）
-        \item<3-> 株式会社ドワンゴ 入社
-        \item<4-> 第二サービス開発本部 \\
-          Dwango Cloud Service部 \\
-          認証基盤セクション
+        \item<3-> リクルートマーケティングパートナーズ（中途）
+        \item<4-> NB本部 プロディベ部 英語学習G
         \item<5-> CTF Team: urandom
         \begin{itemize}
           \item \url{https://urandom.team/}
@@ -127,7 +126,7 @@
     \begin{column}{0.4\textwidth}
       \begin{center}
         \begin{figure}
-          \includegraphics[width=0.95\textwidth]{img/bird2x.png}
+          \includegraphics[width=0.95\textwidth]{img/me.jpg}
         \end{figure}
       \end{center}
 
@@ -189,10 +188,10 @@
   \begin{itemize}
     \item<+-> 勝利したチームが賞金を本当に得られるのかが不明である
     \begin{itemize}
-      \item たとえば脆弱性の情報が欲しいのでCTFを開催したとか
+      \item たとえば脆弱性の情報が欲しいのでCTFを開催する
     \end{itemize}
 
-    \item<+-> 問題を解いたチームが時間内に回答したという証拠がない
+    \item<+-> 問題を解いたチームが時間内に解答したという証拠がない
     \begin{itemize}
       \item Write-upを書くという手もあるが、CTFが終ってから解いたという可能性もある
     \end{itemize}
@@ -286,6 +285,32 @@
   \frametitle{Bitcoinとスクリプト}
 
   \pause
+  \begin{itemize}
+    \item<+-> まずはBitcoinに関する用語を整理する
+  \end{itemize}
+
+  \begin{description}
+    \item<+->[トランザクション] ひとつの送金を表し、送金者が作成する
+    \item<+->[ブロック] トランザクションを複数集めたものを表し、マイナーが作成する。
+    ある$i$番目のブロックは$i - 1$番目のブロックの情報を参照する
+    \item<+->[ブロックチェーン] ブロックを複数集めたもの
+  \end{description}
+
+  \begin{itemize}
+    \item<+-> ハッシュ値の計算によって``長い''ブロックチェーンを作ることを難しくし、
+    ブロックをブロックチェーンへ入れたマイナーに報酬を与えている
+    \item<+-> マイナーはどのようにブロックに含めるべきトランザクションを
+    検証しているのか？
+    \begin{itemize}
+      \item 残高よりも大きいお金のトランザクションといった不正な
+      トランザクションをどのように検出する？
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Bitcoinとスクリプト}
+
   \begin{itemize}
     \item<+-> Bitcoinのトランザクションには\ScriptSig と\ScriptPubKey という
     2つの場所に\textbf{スクリプト}と呼ばれる非チューリング完全な
@@ -423,6 +448,49 @@ $i$
   \frametitle{フラッグワードが正しい場合の挙動}
 
   \pause
+  \begin{columns}
+    \begin{column}{0.4\textwidth}
+      \begin{minipage}[c][0.9\textheight][c]{\linewidth}
+\begin{lstlisting}[style=bitcoin-script, caption={$\text{Tx}_j$の\ScriptPubKey}]
+OP_DUP
+$1$
+OP_EQUAL
+OP_IF
+  OP_DROP
+  OP_SHA256
+  $ans_{1j}$
+  OP_EQUALVERIFY
+  $\mathcal{T}_1$
+OP_ELSE
+  $\vbox{\baselineskip2.5pt\lineskiplimit0pt\kern1pt\hbox{.}\hbox{.}\hbox{.}\kern-1pt}$
+OP_ENDIF
+OP_CHECKSIG 
+\end{lstlisting}
+      \end{minipage}
+    \end{column}
+    \begin{column}{0.6\textwidth}
+      \begin{center}
+         \begin{minipage}[c]{0.6666666\linewidth}
+\begin{lstlisting}[style=bitcoin-script, caption={$\text{Tx}_{1j}$の\ScriptSig}]
+$S_1$
+$h_{1j}$
+$1$
+\end{lstlisting}
+         \end{minipage}
+       \end{center}
+
+       \pause
+       \begin{itemize}
+         \item<+-> 左が運営が作成したトランザクション$\text{Tx}_j$の\ScriptPubKey
+         \item<+-> 右がチーム$T_1$が作成したトランザクション$\text{Tx}_{1j}$の\ScriptSig
+       \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{フラッグワードが正しい場合の挙動}
+
   \begin{columns}
     \begin{column}{0.4\textwidth}
       \begin{minipage}[c][0.9\textheight][c]{\linewidth}
@@ -600,10 +668,13 @@ OP_CHECKSIG
     \item<+-> Bitcoinのリファレンス実装は、
     提案するCTFで利用するようなトランザクションを受け付けない。
     よって現実的にはEthereumなど別の暗号通貨を利用しなければならないかもしれない
+    \begin{itemize}
+      \item<+-> \href{https://twitter.com/lotz84_}{@lotz}さんが
+      Ethereumで実装してくださった
+      \item<+-> {\footnotesize \url{http://lotz84.hatenablog.com/entry/2018/01/02/134056}}
+    \end{itemize}
 
     \item<+-> 賞金が集まれば、提案する方法でCTFを実施してみたい
-
-    \item<+-> 次の冬コミ（C93）ではこの内容で同人誌を出します！
   \end{itemize}
 \end{frame}
 
